@@ -6,6 +6,7 @@ import {
   FaTimes, FaUserPlus
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useParams} from 'react-router-dom';
 import { Menu } from '@headlessui/react';
 import {
   AreaChart,
@@ -498,6 +499,8 @@ const DoctorStatusCard: React.FC<DoctorStatus> = React.memo(
 
 // Main Dashboard Component
 const DashboardDoctor: React.FC = () => {
+  // Extrait l'id de l'utilisateur depuis l'URL (par exemple, /patientPage/123)
+  const { userId } = useParams<{ userId: string }>();
   const [isLoading, setIsLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -853,7 +856,7 @@ const DashboardDoctor: React.FC = () => {
               >
                 {notifications.map(n => (
                   <Menu.Item key={n.id}>
-                    {({ active }) => (
+                    {({ active }: { active: boolean }) => (
                       <button
                         onClick={() => markNotificationAsRead(n.id)}
                         className={`block w-full text-left px-2 py-1 text-sm ${active ? 'bg-gray-100' : ''}`}
