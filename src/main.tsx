@@ -1,10 +1,13 @@
 // src/main.tsx
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./styles/index.css"; // Fichier CSS global si nécessaire
-import "./styles/output.css"; // Fichier CSS global si nécessaire
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './styles/index.css';
+import './styles/output.css';
+
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <App />
+  <React.StrictMode>
+      <App />
+  </React.StrictMode>
 );
