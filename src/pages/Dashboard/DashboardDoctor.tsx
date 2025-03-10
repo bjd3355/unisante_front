@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   FaBars, FaCalendarAlt, FaUserMd, FaUsers, FaSignOutAlt, FaBell, FaSearch, FaPlus,
   FaCloudSun, FaEnvelope, FaCalendar, FaUser, FaPhone, FaStar, FaClock, FaChevronLeft,
@@ -6,7 +6,6 @@ import {
   FaTimes, FaUserPlus
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useParams} from 'react-router-dom';
 import { Menu } from '@headlessui/react';
 import {
   AreaChart,
@@ -25,6 +24,8 @@ import { Doughnut } from 'react-chartjs-2';
 import logo from '../assets/images/logo-unisante.jpg';
 import avatar from '../assets/images/avatar.jpg';
 import doctorIllustration from '../assets/images/Doctor.gif';
+import DoctorProfile from './DoctorProfile';
+
 
 // Register Chart.js components
 ChartJS.register(ArcElement, ChartTooltip);
@@ -110,7 +111,7 @@ interface PatientNumberData {
   female: number;
 }
 
-// Sample data
+// Sample Data
 const patientsSurveyData = [
   { time: '00:00', newPatients: 20, oldPatients: 30 },
   { time: '01:00', newPatients: 30, oldPatients: 40 },
@@ -121,28 +122,25 @@ const patientsSurveyData = [
   { time: '06:00', newPatients: 50, oldPatients: 40 },
 ];
 
-// Modification des couleurs pour le graphique "Rendez-vous"
 const appointmentReviewData = {
   labels: ['Face to Face', 'E-Consult', 'Available'],
   datasets: [{
     data: [100, 80, 60],
-    backgroundColor: ['#FF6F61', '#6B5B95', '#88B04B'], // Couleurs différentes : Corail, Violet profond, Vert olive
+    backgroundColor: ['#FF6F61', '#6B5B95', '#88B04B'],
     borderWidth: 1,
   }],
 };
 
-// Modification des couleurs pour les groupes de patients
 const patientGroups: PatientGroup[] = [
-  { letter: 'C', disease: 'Cholestérol', patientCount: 5, color: '#FF6347' }, // Tomate
-  { letter: 'D', disease: 'Diabète', patientCount: 14, color: '#4682B4' }, // Bleu acier
-  { letter: 'L', disease: 'Low Blood Pressure', patientCount: 10, color: '#32CD32' }, // Vert lime
-  { letter: 'H', disease: 'Hypertension', patientCount: 21, color: '#FFD700' }, // Or
-  { letter: 'M', disease: 'Malaria', patientCount: 11, color: '#FF4500' }, // Rouge orangé
-  { letter: 'D', disease: 'Dental Problem', patientCount: 17, color: '#8A2BE2' }, // Violet bioluminescent
-  { letter: 'A', disease: 'Asthma', patientCount: 8, color: '#20B2AA' }, // Turquoise
+  { letter: 'C', disease: 'Cholestérol', patientCount: 5, color: '#FF6347' },
+  { letter: 'D', disease: 'Diabète', patientCount: 14, color: '#4682B4' },
+  { letter: 'L', disease: 'Low Blood Pressure', patientCount: 10, color: '#32CD32' },
+  { letter: 'H', disease: 'Hypertension', patientCount: 21, color: '#FFD700' },
+  { letter: 'M', disease: 'Malaria', patientCount: 11, color: '#FF4500' },
+  { letter: 'D', disease: 'Dental Problem', patientCount: 17, color: '#8A2BE2' },
+  { letter: 'A', disease: 'Asthma', patientCount: 8, color: '#20B2AA' },
 ];
 
-// Données pour le statut des docteurs
 const doctorStatusData: DoctorStatus[] = [
   { name: 'Dr. Jay Soni', degree: 'MBBS, MD', status: 'Available', image: doctorIllustration },
   { name: 'Dr. Sarah Smil', degree: 'BDS, MDS', status: 'Absent', image: doctorIllustration },
@@ -153,7 +151,6 @@ const doctorStatusData: DoctorStatus[] = [
   { name: 'Dr. Linda Cart', degree: 'MBBS', status: 'Available', image: doctorIllustration },
 ];
 
-// Données pour le graphique du nombre de patients
 const patientNumberData: PatientNumberData[] = [
   { day: 'Mon', male: 40, female: 60 },
   { day: 'Tue', male: 50, female: 80 },
@@ -279,11 +276,11 @@ const RecentAppointment: React.FC<Appointment & {
       <td className="py-3 px-4 text-green-700">{date} {time}</td>
       <td className="py-3 px-4">
         <span className={`px-2 py-1 rounded-full text-xs ${
-          disease === 'Fièvre' ? 'bg-pink-100 text-pink-700' : // Rose pour Fièvre
-          disease === 'Infection' ? 'bg-teal-100 text-teal-700' : // Teal pour Infection
-          disease === 'Paludisme' ? 'bg-amber-100 text-amber-700' : // Ambre pour Paludisme
-          disease === 'Migraine' ? 'bg-indigo-100 text-indigo-700' : // Indigo pour Migraine
-          disease === 'Grippe' ? 'bg-cyan-100 text-cyan-700' : // Cyan pour Grippe
+          disease === 'Fièvre' ? 'bg-pink-100 text-pink-700' : 
+          disease === 'Infection' ? 'bg-teal-100 text-teal-700' : 
+          disease === 'Paludisme' ? 'bg-amber-100 text-amber-700' : 
+          disease === 'Migraine' ? 'bg-indigo-100 text-indigo-700' : 
+          disease === 'Grippe' ? 'bg-cyan-100 text-cyan-700' : 
           'bg-green-100 text-green-700'
         }`}>
           {disease}
@@ -291,10 +288,10 @@ const RecentAppointment: React.FC<Appointment & {
       </td>
       <td className="py-3 px-4">
         <span className={`px-2 py-1 rounded-full text-xs ${
-          status === 'Confirmé' ? 'bg-emerald-100 text-emerald-700' : // Émeraude pour Confirmé
-          status === 'En attente' ? 'bg-orange-100 text-orange-700' : // Orange pour En attente
-          status === 'Annulé' ? 'bg-rose-100 text-rose-700' : // Rose pour Annulé
-          'bg-sky-100 text-sky-700' // Ciel pour Reporté
+          status === 'Confirmé' ? 'bg-emerald-100 text-emerald-700' : 
+          status === 'En attente' ? 'bg-orange-100 text-orange-700' : 
+          status === 'Annulé' ? 'bg-rose-100 text-rose-700' : 
+          'bg-sky-100 text-sky-700'
         }`}>
           {status}
         </span>
@@ -324,7 +321,7 @@ const RecentAppointment: React.FC<Appointment & {
               <FaCheck />
             </motion.button>
             <motion.button 
-              whileHover={{ scale: 1.1 }} 
+              whileHover={{ scale: 1.1}} 
               whileTap={{ scale: 0.9 }} 
               onClick={onRefuse}
               className="p-1 text-red-600 hover:text-red-800"
@@ -369,7 +366,7 @@ const DoctorCard: React.FC<Doctor> = React.memo(
         <div className="relative">
           <img src={image} alt={name} className="w-14 h-14 rounded-md border border-green-200" />
           <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${
-            online ? 'bg-lime-500' : 'bg-gray-400' // Lime pour online
+            online ? 'bg-lime-500' : 'bg-gray-400'
           } border-2 border-white`}></span>
         </div>
         <div>
@@ -418,7 +415,7 @@ const PatientCard: React.FC<Patient> = React.memo(
         <div className="relative">
           <img src={doctorIllustration} alt={name} className="w-14 h-14 rounded-md border border-green-200" />
           <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${
-            status === 'Stable' ? 'bg-emerald-500' : 'bg-rose-500' // Émeraude pour Stable, Rose pour Critique
+            status === 'Stable' ? 'bg-emerald-500' : 'bg-rose-500'
           } border-2 border-white`}></span>
         </div>
         <div>
@@ -489,7 +486,7 @@ const DoctorStatusCard: React.FC<DoctorStatus> = React.memo(
         </div>
       </div>
       <span className={`px-2 py-1 rounded-full text-xs ${
-        status === 'Available' ? 'bg-lime-100 text-lime-700' : 'bg-amber-100 text-amber-700' // Lime pour Available, Ambre pour Absent
+        status === 'Available' ? 'bg-lime-100 text-lime-700' : 'bg-amber-100 text-amber-700'
       }`}>
         {status}
       </span>
@@ -499,8 +496,6 @@ const DoctorStatusCard: React.FC<DoctorStatus> = React.memo(
 
 // Main Dashboard Component
 const DashboardDoctor: React.FC = () => {
-  // Extrait l'id de l'utilisateur depuis l'URL (par exemple, /patientPage/123)
-  const { userId } = useParams<{ userId: string }>();
   const [isLoading, setIsLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -690,200 +685,262 @@ const DashboardDoctor: React.FC = () => {
   const filteredDoctors = doctors.filter(doc => 
     doc.name.toLowerCase().includes(searchPatient.toLowerCase())
   );
-
   return (
     <div className={`min-h-screen flex font-sans antialiased ${isDarkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
       {/* Sidebar */}
       <motion.aside
-        initial={{ width: isSidebarOpen ? 260 : 70 }}
-        animate={{ width: isSidebarOpen ? 260 : 70 }}
-        className="bg-gradient-to-b from-green-700 to-green-900 text-white flex flex-col h-screen fixed z-20 shadow-xl"
-      >
-        <div className="p-3 flex items-center justify-between">
-          <motion.img 
-            src={logo} 
-            alt="Logo UniSanté" 
-            className="w-10 h-10 rounded-md border border-green-200" 
-            whileHover={{ scale: 1.1, rotate: 360 }} 
-            transition={{ duration: 0.5 }}
-          />
-          <motion.button 
-            whileHover={{ scale: 1.1 }} 
-            whileTap={{ scale: 0.9 }} 
-            onClick={toggleSidebar}
-            className="p-2 rounded-full bg-green-800/50 hover:bg-green-700/70"
+      initial={{ width: isSidebarOpen ? 260 : 70 }}
+      animate={{ width: isSidebarOpen ? 260 : 70 }}
+      className="bg-green-900 text-white flex flex-col h-screen fixed z-20 shadow-xl"
+    >
+      {/* En-tête avec logo et nom UniSanté */}
+      <div className="p-2 flex flex-col items-center">
+        <motion.img
+          src={logo}
+          alt="Logo UniSanté"
+          className="w-12 h-12 rounded-full border border-green-200 mb-1"
+          whileHover={{ scale: 1.1, rotate: 360 }}
+          transition={{ duration: 0.5 }}
+        />
+        {isSidebarOpen && (
+          <motion.h1
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="text-xl font-bold"
           >
-            {isSidebarOpen ? <FaChevronLeft /> : <FaChevronRight />}
-          </motion.button>
-        </div>
-        <nav className="flex-1 px-2">
-          <ul className="space-y-2">
-            {[
-              { label: 'Tableau de bord', icon: <FaBars />, ref: dashboardRef },
-              { label: 'Rendez-vous', icon: <FaCalendarAlt />, ref: appointmentsRef },
-              { label: 'Médecins', icon: <FaUserMd />, ref: doctorsRef },
-              { label: 'Patients', icon: <FaUsers />, ref: patientsRef },
-              { label: 'Profil', icon: <FaUser />, ref: profileRef },
-            ].map((item, index) => (
-              <motion.li 
-                key={index} 
-                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }} 
-                className="rounded-md"
-              >
-                <motion.button 
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => scrollToSection(item.ref)}
-                  className={`flex items-center p-3 w-full text-left ${isSidebarOpen ? 'space-x-3' : 'justify-center'}`}
-                >
-                  <span className="text-xl">{item.icon}</span>
-                  <AnimatePresence>
-                    {isSidebarOpen && (
-                      <motion.span 
-                        initial={{ opacity: 0, x: -10 }} 
-                        animate={{ opacity: 1, x: 0 }} 
-                        exit={{ opacity: 0, x: -10 }}
-                        className="text-sm font-medium"
-                      >
-                        {item.label}
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                </motion.button>
-              </motion.li>
-            ))}
-          </ul>
-        </nav>
-        <div className="p-3 border-t border-green-600/50">
-          <AnimatePresence>
-            {isSidebarOpen && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }} 
-                animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: 10 }}
-                className="flex items-center space-x-3 mb-3"
-              >
-                <img 
-                  src={avatar} 
-                  alt="Dr. Jophret BAKANA" 
-                  className="w-9 h-9 rounded-full border-2 border-green-200"
-                />
-                <div>
-                  <span className="text-sm font-medium">Dr. Jophret BAKANA</span>
-                  <p className="text-xs text-green-200">Gynécologue</p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <motion.button 
-            whileHover={{ scale: 1.05, backgroundColor: '#dc2626' }} 
-            whileTap={{ scale: 0.95 }}
-            onClick={handleLogout}
-            className={`flex items-center p-3 w-full rounded-md bg-red-600 hover:bg-red-700 ${
-              isSidebarOpen ? 'space-x-3' : 'justify-center'
-            } ${isLoadingAction === 'logout' ? 'opacity-50 cursor-not-allowed' : ''}`}
-            disabled={isLoadingAction === 'logout'}
-          >
-            {isLoadingAction === 'logout' ? (
-              <motion.div 
-                animate={{ rotate: 360 }} 
-                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} 
-                className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-              />
-            ) : (
-              <>
-                <FaSignOutAlt />
-                {isSidebarOpen && (
-                  <motion.span 
-                    initial={{ opacity: 0, x: -10 }} 
-                    animate={{ opacity: 1, x: 0 }}
-                    className="text-sm font-medium"
-                  >
-                    Déconnexion
-                  </motion.span>
-                )}
-              </>
-            )}
-          </motion.button>
-        </div>
-      </motion.aside>
+            UniSanté
+          </motion.h1>
+        )}
+      </div>
 
-      {/* Main Content */}
-      <main className={`flex-1 p-6 ${isSidebarOpen ? 'ml-[260px]' : 'ml-[70px]'} overflow-y-auto`}>
-        <header 
-          className={`flex justify-between items-center mb-6 p-4 rounded-xl shadow-md sticky top-2 z-10 ${
-            isDarkMode ? 'bg-gray-800/90' : 'bg-white/95'
-          } backdrop-blur-md border border-gray-200/50`}
-        >
-          <div className="flex items-center space-x-3">
-            <motion.img 
-              src={avatar} 
-              alt="Dr. Jophret BAKANA" 
-              className="w-10 h-10 rounded-md border border-green-200" 
-              whileHover={{ scale: 1.1, rotate: 360 }} 
+      {/* Section utilisateur avec traits et décalage à droite */}
+      <div className="p-2 flex items-center justify-between relative">
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            className="flex items-center space-x-3 ml-4"
+          >
+            {/* Trait supérieur */}
+            <div className="w-full h-px bg-white/30 absolute top-0 left-0"></div>
+            <img
+                src={avatar}
+              alt="Doctor"
+              className="w-16 h-20 rounded-lg mt-1 mb-1"
             />
+            {/* Trait inférieur */}
+            <div className="w-full h-px bg-white/30 absolute bottom-0 left-0"></div>
             <div>
-              <h1 className="text-2xl font-bold text-green-900">Dr. Jophret BAKANA</h1>
-              <p className="text-sm text-green-600">Gynécologue - UniSanté 2025</p>
+              <span className="text-sm">Docteur</span>
+              <p className="text-sm font-semibold">Jophret BAKANA</p>
             </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <motion.div 
-              className={`p-3 rounded-md ${isDarkMode ? 'bg-gray-700' : 'bg-green-50'} flex items-center space-x-2`}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
+          </motion.div>
+        )}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={toggleSidebar}
+          className="p-2 rounded-full bg-green-800/50 hover:bg-green-700/70"
+        >
+          {isSidebarOpen ? <FaChevronLeft /> : <FaChevronRight />}
+        </motion.button>
+      </div>
+
+      {/* Menu de navigation */}
+      <nav className="flex-1 px-2">
+        <ul className="space-y-1">
+          {[
+            { label: 'Tableau de bord', icon: <FaBars />, ref: dashboardRef },
+            { label: 'Rendez-vous', icon: <FaCalendarAlt />, ref: appointmentsRef },
+            { label: 'Médecins', icon: <FaUserMd />, ref: doctorsRef },
+            { label: 'Patients', icon: <FaUsers />, ref: patientsRef },
+            { label: 'Profil', icon: <FaUser />, ref: profileRef },
+          ].map((item, index) => (
+            <motion.li
+              key={index}
+              whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
+              className="rounded-md"
             >
-              <FaCloudSun className="text-green-600" />
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => scrollToSection(item.ref)}
+                className={`flex items-center p-2 w-full text-left ${isSidebarOpen ? 'space-x-3' : 'justify-center'}`}
+              >
+                <span className="text-xl">{item.icon}</span>
+                <AnimatePresence>
+                  {isSidebarOpen && (
+                    <motion.span
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      className="text-sm font-medium"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+            </motion.li>
+          ))}
+        </ul>
+      </nav>
+
+      {/* Section utilisateur en bas (avec Dr. Jophret BAKANA) */}
+      <div className="p-2 border-t border-green-600/50">
+        <AnimatePresence>
+          {isSidebarOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              className="flex items-center space-x-3 mb-2"
+            >
+              <img
+                src={logo}
+                alt="Dr. Jophret BAKANA"
+                className="w-9 h-9 rounded-full border-2 border-green-200"
+              />
               <div>
-                <p className="text-sm font-medium">Dakar - 5 Mars 2025</p>
-                <p className="text-xs text-green-700">18°C | Humidité: 65%</p>
+                <span className="text-sm font-medium">Dr. Jophret BAKANA</span>
+                <p className="text-xs text-green-200">Gynécologue</p>
               </div>
             </motion.div>
-            <Menu as="div" className="relative">
-              <Menu.Button className="p-2 text-green-900 relative hover:text-green-700">
-                <FaBell className="text-xl" />
-                {notifications.some(n => !n.read) && (
-                  <motion.span 
-                    animate={{ scale: [1, 1.2, 1] }} 
-                    transition={{ duration: 1, repeat: Infinity }}
-                    className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"
-                  />
-                )}
-              </Menu.Button>
-              <Menu.Items 
-                className={`absolute right-0 mt-2 w-72 rounded-md shadow-lg p-2 max-h-60 overflow-y-auto ${
-                  isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-green-900'
-                } border border-gray-200`}
-              >
-                {notifications.map(n => (
-                  <Menu.Item key={n.id}>
-                    {({ active }: { active: boolean }) => (
-                      <button
-                        onClick={() => markNotificationAsRead(n.id)}
-                        className={`block w-full text-left px-2 py-1 text-sm ${active ? 'bg-gray-100' : ''}`}
-                      >
-                        <NotificationCard {...n} onClick={() => {}} />
-                      </button>
-                    )}
-                  </Menu.Item>
-                ))}
-              </Menu.Items>
-            </Menu>
-            <motion.button 
-              whileHover={{ scale: 1.1 }} 
-              whileTap={{ scale: 0.9 }} 
-              onClick={toggleDarkMode}
-              className="p-2 rounded-full bg-green-100 text-green-900 hover:bg-green-200"
-            >
-              {isDarkMode ? <FaSun className="text-xl" /> : <FaMoon className="text-xl" />}
-            </motion.button>
-            <motion.img 
-              src={avatar} 
-              alt="Dr. Jophret BAKANA" 
-              className="w-10 h-10 rounded-full border border-green-200" 
-              whileHover={{ scale: 1.1 }} 
+          )}
+        </AnimatePresence>
+        <motion.button
+          whileHover={{ scale: 1.05, backgroundColor: '#dc2626' }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleLogout}
+          className={`flex items-center p-2 w-full rounded-md bg-red-600 hover:bg-red-700 ${
+            isSidebarOpen ? 'space-x-3' : 'justify-center'
+          } ${isLoadingAction === 'logout' ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={isLoadingAction === 'logout'}
+        >
+          {isLoadingAction === 'logout' ? (
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
             />
-          </div>
-        </header>
+          ) : (
+            <>
+              <FaSignOutAlt />
+              {isSidebarOpen && (
+                <motion.span
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="text-sm font-medium"
+                >
+                  Déconnexion
+                </motion.span>
+              )}
+            </>
+          )}
+        </motion.button>
+      </div>
+    </motion.aside>
+      {/* Main Content */}
+      <main className={`flex-1 p-6 ${isSidebarOpen ? 'ml-[260px]' : 'ml-[70px]'} overflow-y-auto`}>
+        <header
+  className={`flex justify-between items-center mb-8 p-6 rounded-xl shadow-lg sticky top-2 z-10 ${
+    isDarkMode ? 'bg-gray-800/95' : 'bg-white/95'
+  } backdrop-blur-md border border-gray-200/50`}
+>
+  {/* Section gauche : Image et infos */}
+  <div className="flex items-center space-x-4">
+    <motion.img
+      src={avatar}
+      alt="Dr. Jophret BAKANA"
+      className="w-16 h-16 rounded-lg border-2 border-green-300 shadow-md object-cover"
+      whileHover={{ scale: 1.1, rotate: 10 }}
+      transition={{ duration: 0.3 }}
+    />
+    <div>
+      <div className="flex items-center space-x-2">
+        <FaUser className="text-green-600" />
+        <h1 className="text-3xl font-bold text-green-900">Dr. Jophret BAKANA</h1>
+      </div>
+      <p className="text-base text-green-600 font-medium">Gynécologue - UniSanté 2025</p>
+    </div>
+  </div>
+
+  {/* Section droite : Météo, notifications, mode sombre, avatar */}
+  <div className="flex items-center space-x-6">
+    {/* Météo */}
+    <motion.div
+      className={`p-4 rounded-lg ${
+        isDarkMode ? 'bg-gray-700 text-green-100' : 'bg-green-50 text-green-900'
+      } flex items-center space-x-3 shadow-sm`}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.2 }}
+    >
+      <FaCloudSun className="text-green-600 text-xl" />
+      <div>
+        <p className="text-sm font-semibold">Dakar - 6 Mars 2025</p>
+        <p className="text-xs text-green-700">18°C | Humidité: 65%</p>
+      </div>
+    </motion.div>
+
+    {/* Notifications */}
+    <Menu as="div" className="relative">
+      <Menu.Button className="p-3 text-green-900 hover:text-green-700 relative focus:outline-none">
+        <FaBell className="text-2xl" />
+        {notifications.some((n) => !n.read) && (
+          <motion.span
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 1, repeat: Infinity }}
+            className="absolute top-1 right-1 w-3 h-3 bg-red-500 rounded-full border border-white"
+          />
+        )}
+      </Menu.Button>
+      <Menu.Items
+        className={`absolute right-0 mt-2 w-80 rounded-lg shadow-xl p-3 max-h-72 overflow-y-auto ${
+          isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-green-900'
+        } border border-gray-200`}
+      >
+        {notifications.map((n) => (
+          <Menu.Item key={n.id}>
+            {({ active }) => (
+              <button
+                onClick={() => markNotificationAsRead(n.id)}
+                className={`block w-full text-left px-3 py-2 text-sm rounded-md ${
+                  active ? 'bg-gray-100' : ''
+                }`}
+              >
+                <NotificationCard {...n} onClick={() => {}} />
+              </button>
+            )}
+          </Menu.Item>
+        ))}
+      </Menu.Items>
+    </Menu>
+
+    {/* Bouton Mode Sombre/Clair */}
+    <motion.button
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      onClick={toggleDarkMode}
+      className={`p-3 rounded-full ${
+        isDarkMode ? 'bg-green-700 text-white' : 'bg-green-100 text-green-900'
+      } hover:bg-green-200 shadow-md`}
+      title={isDarkMode ? 'Passer en mode clair' : 'Passer en mode sombre'}
+    >
+      {isDarkMode ? <FaSun className="text-2xl" /> : <FaMoon className="text-2xl" />}
+    </motion.button>
+
+    {/* Avatar droite */}
+    <motion.img
+      src={avatar}
+      alt="Dr. Jophret BAKANA"
+      className="w-12 h-12 rounded-full border-2 border-green-300 shadow-md object-cover"
+      whileHover={{ scale: 1.1 }}
+      transition={{ duration: 0.3 }}
+    />
+  </div>
+</header>
 
         {/* Dashboard Section */}
         <motion.div ref={dashboardRef} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
@@ -908,20 +965,20 @@ const DashboardDoctor: React.FC = () => {
                   title="Rendez-vous" 
                   value={`${appointments.length}`} 
                   icon={<FaCalendar />} 
-                  className="bg-violet-300" // Violet
+                  className="bg-violet-300" 
                   onClick={() => scrollToSection(appointmentsRef)}
                 />
                 <StatCard 
                   title="Chirurgies" 
                   value="3+" 
                   icon={<FaUserMd />} 
-                  className="bg-rose-300" // Rose
+                  className="bg-rose-300" 
                 />
                 <StatCard 
                   title="Visites" 
                   value={`${patients.length}`} 
                   icon={<FaUsers />} 
-                  className="bg-teal-300" // Teal
+                  className="bg-teal-300" 
                   onClick={() => scrollToSection(patientsRef)}
                 />
               </div>
@@ -941,7 +998,7 @@ const DashboardDoctor: React.FC = () => {
           )}
         </motion.div>
 
-        {/* Charts Section - Graphiques côte à côte */}
+        {/* Charts Section */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
           <div className={`space-y-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-6 rounded-xl shadow-md border border-gray-200`}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -953,8 +1010,8 @@ const DashboardDoctor: React.FC = () => {
                     <XAxis dataKey="time" stroke="#6b7280" tick={{ fontSize: 12, fill: '#6b7280' }} />
                     <YAxis stroke="#6b7280" tick={{ fontSize: 12, fill: '#6b7280' }} />
                     <RechartsTooltip contentStyle={{ backgroundColor: isDarkMode ? '#374151' : '#fff', border: 'none' }} />
-                    <Area type="monotone" dataKey="newPatients" stackId="1" fill="#FF8C00" stroke="#FF8C00" name="Nouveaux" /> {/* Orange foncé */}
-                    <Area type="monotone" dataKey="oldPatients" stackId="1" fill="#00CED1" stroke="#00CED1" name="Anciens" /> {/* Turquoise foncé */}
+                    <Area type="monotone" dataKey="newPatients" stackId="1" fill="#FF8C00" stroke="#FF8C00" name="Nouveaux" />
+                    <Area type="monotone" dataKey="oldPatients" stackId="1" fill="#00CED1" stroke="#00CED1" name="Anciens" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -985,7 +1042,6 @@ const DashboardDoctor: React.FC = () => {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
           <div className={`space-y-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-6 rounded-xl shadow-md border border-gray-200`}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Doctor Status */}
               <div className="p-4 bg-white rounded-xl shadow-md border border-gray-200">
                 <h3 className="text-lg font-semibold text-green-900 mb-4">Statut des Docteurs</h3>
                 <div className="max-h-96 overflow-y-auto">
@@ -994,7 +1050,6 @@ const DashboardDoctor: React.FC = () => {
                   ))}
                 </div>
               </div>
-              {/* Number of Patients */}
               <div className="p-4 bg-white rounded-xl shadow-md border border-gray-200">
                 <h3 className="text-lg font-semibold text-green-900 mb-4">Nombre de Patients</h3>
                 <ResponsiveContainer width="100%" height={300}>
@@ -1004,8 +1059,8 @@ const DashboardDoctor: React.FC = () => {
                     <YAxis stroke="#6b7280" tick={{ fontSize: 12, fill: '#6b7280' }} />
                     <RechartsTooltip contentStyle={{ backgroundColor: isDarkMode ? '#374151' : '#fff', border: 'none' }} />
                     <Legend verticalAlign="bottom" height={36} />
-                    <Bar dataKey="male" fill="#DC143C" name="Homme" /> {/* Rouge cramoisi */}
-                    <Bar dataKey="female" fill="#7B68EE" name="Femme" /> {/* Violet moyen */}
+                    <Bar dataKey="male" fill="#DC143C" name="Homme" />
+                    <Bar dataKey="female" fill="#7B68EE" name="Femme" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -1017,7 +1072,6 @@ const DashboardDoctor: React.FC = () => {
         <motion.div ref={appointmentsRef} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-8">
           <h2 className="text-2xl font-bold text-green-900 mb-4">Rendez-vous</h2>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Liste des rendez-vous */}
             <div className="lg:col-span-2">
               <div className={`p-4 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-md border border-gray-200`}>
                 <div className="flex justify-between items-center mb-4">
@@ -1073,8 +1127,6 @@ const DashboardDoctor: React.FC = () => {
                 </div>
               </div>
             </div>
-            
-            {/* Groupe de patients */}
             <div className="lg:col-span-1">
               <div className={`p-4 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-md border border-gray-200`}>
                 <h3 className="text-lg font-semibold text-green-900 mb-4">Groupe de Patients</h3>
@@ -1088,7 +1140,7 @@ const DashboardDoctor: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Modal pour ajouter un rendez-vous */}
+        {/* Modal for Adding Appointment */}
         <AnimatePresence>
           {isModalOpen && (
             <motion.div
@@ -1234,25 +1286,9 @@ const DashboardDoctor: React.FC = () => {
 
         {/* Profile Section */}
         <motion.div ref={profileRef} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <h2 className="text-2xl font-bold text-green-900 mb-4">Profil</h2>
-          <div className={`p-4 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-md border border-gray-200`}>
-            <div className="flex items-center space-x-4 mb-4">
-              <img src={avatar} alt="Dr. Jophret BAKANA" className="w-16 h-16 rounded-md border border-green-200" />
-              <div>
-                <h3 className="text-xl font-semibold text-green-900">Dr. Jophret BAKANA</h3>
-                <p className="text-sm text-green-600">Gynécologue - Certifiée depuis 2015</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-green-900">
-              <p><strong>Email:</strong> jophret@unisante.sn</p>
-              <p><strong>Téléphone:</strong> +221771234567</p>
-              <p><strong>Hôpital:</strong> UniSanté Dakar</p>
-              <p><strong>ID médical:</strong> MED-789123</p>
-            </div>
-          </div>
+        <DoctorProfile isDarkMode={isDarkMode} />
         </motion.div>
       </main>
-
       <style>{`
         ::-webkit-scrollbar {
           width: 8px;
