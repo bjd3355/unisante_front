@@ -1,11 +1,11 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import "font-awesome/css/font-awesome.min.css";
 import { ToastContainer } from "react-toastify";
+import "font-awesome/css/font-awesome.min.css";
 import "leaflet/dist/leaflet.css";
 import "react-toastify/dist/ReactToastify.css";
 import "./pages/Dashboard/i18n";
-import { UserProvider } from "./contexts/UserContext"; // Contexte utilisateur
+import { UserProvider } from "./contexts/UserContext";
 
 // Composants chargés paresseusement
 const LoginPage = lazy(() => import("./pages/Home/PageConnexion"));
@@ -13,9 +13,15 @@ const SignupPage = lazy(() => import("./pages/Home/Inscription"));
 const Home = lazy(() => import("./pages/Home/Home"));
 const Appointments = lazy(() => import("./pages/Appointments/Appointments"));
 const Pharmacies = lazy(() => import("./pages/Pharmacies/Pharmacies"));
-const Dashboard = lazy(() => import("./pages/Dashboard/Dashboard"));
+const Dashboard = lazy(() => import("./pages/Dashboard/admin/Dashboard/Dashboard"));
 const DashboardDoctor = lazy(() => import("./pages/Dashboard/DashboardDoctor"));
 const PatientPage = lazy(() => import("./pages/Dashboard/PatientPage"));
+const Appointmentsadmin = lazy(() => import("./pages/Appointments/Appointments"));
+const Pharmaciesadmin = lazy(() => import("./pages/Dashboard/admin/Pharmacies/Pharmacies"));
+const Patients = lazy(() => import("./pages/Dashboard/admin/patient/Patients"));
+const Contact = lazy(() => import("./pages/Dashboard/admin/contact/Contact"));
+const Doctors = lazy(() => import("./pages/Dashboard/admin/doctors/doctors"));
+const Layout = lazy(() => import("./components/layout/Layout")); // le layout avec Sidebar
 
 // Composant de chargement
 const LoadingScreen = () => (
@@ -35,11 +41,9 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles, children }) => {
   const userRole = localStorage.getItem("userRole");
-
   if (!userRole || !allowedRoles.includes(userRole)) {
     return <Navigate to="/unauthorized" replace />;
   }
-
   return children;
 };
 
@@ -49,7 +53,7 @@ const Unauthorized: React.FC = () => (
     <div className="text-center">
       <h1 className="text-3xl font-bold text-red-600">Accès refusé</h1>
       <p className="mt-4 text-lg">
-        Vous n'avez pas les droits nécessaires pour accéder à cette page. 
+        Vous n'avez pas les droits nécessaires pour accéder à cette page.
       </p>
     </div>
   </div>
@@ -57,7 +61,7 @@ const Unauthorized: React.FC = () => (
 
 const App: React.FC = () => {
   return (
-    <UserProvider> {/* Fournit le contexte utilisateur */}
+    <UserProvider>
       <Router>
         <ToastContainer />
         <Suspense fallback={<LoadingScreen />}>
@@ -67,37 +71,73 @@ const App: React.FC = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/home" element={<Home />} />
             <Route path="/signup" element={<SignupPage />} />
-            <Route path="/appointments" element={<Appointments />} />
+            <Route path="/appointments/:patientId" element={<Appointments />} />
             <Route path="/pharmacies" element={<Pharmacies />} />
-
-            {/* Routes protégées avec userId dans l'URL */}
-            <Route
-              path="/dashboard/:userId"
-              element={
-                <ProtectedRoute allowedRoles={["admin"]}>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboardDoctor/:userId"
-              element={
-                <ProtectedRoute allowedRoles={["doctor"]}>
-                  <DashboardDoctor />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/patientPage/:userId"
-              element={
-                <ProtectedRoute allowedRoles={["patient"]}>
-                  <PatientPage />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Route pour les accès non autorisés */}
+            <Route path="/dashboardDoctor/:userId" element={
+              <ProtectedRoute allowedRoles={["doctor"]}>
+                <DashboardDoctor />
+              </ProtectedRoute>
+            } />
+            <Route path="/patientPage/:userId" element={
+              <ProtectedRoute allowedRoles={["patient"]}>
+                <PatientPage />
+              </ProtectedRoute>
+            } />
             <Route path="/unauthorized" element={<Unauthorized />} />
+
+            {/* Routes protégées avec layout */}
+            {/* Routes protégées avec layout */}
+            <Route element={<Layout />}>
+              <Route
+                path="/dashboard/:userId"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/appointmentsadmin"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <Appointmentsadmin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/pharmaciesadmin"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <Pharmaciesadmin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/patients"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <Patients />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/doctors"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <Doctors />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/contact"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <Contact />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+
           </Routes>
         </Suspense>
       </Router>
